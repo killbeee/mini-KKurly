@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.drg/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MainDAO">
+	<!-- 쿼리 작성 영역 -->
+	<select id="getProdCdList" parameterType="String" resultType="prod">
+		SELECT * 
+		FROM TB_PROD
+		WHERE PROD_CG_CD LIKE CONCAT('%', #{cd})
+	</select>
+	
+	<select id="getProdList" parameterType="String" resultType="prod">
+		SELECT *
+		FROM TB_PROD
+		WHERE PROD_NM LIKE CONCAT('%', #{prodNm}, '%')
+	</select>
+	
+	<select id="getBestProdList" resultType="prod">
+		SELECT *
+		FROM TB_PROD
+		ORDER BY INPUT_DT DESC LIMIT 8
+	</select>
+	
+	<select id="getTopSaleProdList" resultType="prod">
+		SELECT *
+		FROM TB_PROD
+		ORDER BY SALE_QTY DESC LIMIT 8
+	</select>
+	
+	<select id="getRandomProdList" resultType="prod">
+		SELECT *
+		FROM TB_PROD
+		ORDER BY rand() DESC LIMIT 12
+	</select>
+	
+	<!-- <select id="getProdCnt" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM TB_PROD
+		WHERE PROD_CG_CD LIKE CONCAT('%', #{cd})
+	</select> -->
+	
+	<select id="getCgNm" parameterType="String" resultType="String">
+		SELECT CD_NM
+		FROM TB_CD
+		WHERE CD = #{cd}
+		LIMIT 1
+	</select>
+	
+	<select id="getProd" parameterType="int" resultType="prod">
+		SELECT * 
+		FROM TB_PROD
+		WHERE PROD_NO = #{prodNo}
+	</select>
+	
+	<insert id="insertLike" parameterType="map">
+		INSERT INTO TB_USER_LIKE
+		VALUES 
+		(#{userNo}, #{prodNo})
+	</insert>
+	
+	<select id="getLikeList" parameterType="like" resultType="like">
+		SELECT *
+		FROM TB_USER_LIKE
+		WHERE USER_NO = #{userNo}
+		AND PROD_NO = #{prodNo}
+	</select>
+	
+	<delete id="deleteLike" parameterType="map">
+		DELETE FROM TB_USER_LIKE
+		WHERE USER_NO = ${userNo} 
+		AND PROD_NO = ${prodNo}
+	</delete>
+	
+	<select id="getUserLikeList" parameterType="int" resultType="prod">
+		SELECT B.*
+		FROM TB_USER_LIKE A
+		INNER JOIN TB_PROD B
+		ON A.PROD_NO = B.PROD_NO
+		WHERE A.USER_NO = #{userNo};
+	</select>
+	
+</mapper>

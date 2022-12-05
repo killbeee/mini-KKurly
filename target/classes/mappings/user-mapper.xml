@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.drg/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserDAO">
+	<!-- 쿼리 작성 영역 -->
+	<select id="idCheck" parameterType="string" resultType="int">
+		SELECT COUNT(USER_ID)
+			FROM TB_USER
+			WHERE USER_ID = #{userId}
+	</select>
+	
+	<insert id="join" parameterType="user">
+	<![CDATA[
+		INSERT INTO TB_USER(
+			USER_NO,
+			USER_ID,
+			USER_PW,
+			USER_NM,
+			USER_TEL,
+			USER_EMAIL,
+			USER_BD,
+			INPUT_DT
+		) VALUES (
+			(
+				SELECT IFNULL(MAX(A.USER_NO), 0) + 1
+					FROM TB_USER A
+			),
+			#{userId},
+			#{userPw},
+			#{userNm},
+			#{userTel},
+			#{userEmail},
+			#{userBd},
+			NOW()
+		)
+	]]>
+	</insert>
+	
+	<select id="login" parameterType="user" resultType="user">
+	<![CDATA[
+		SELECT USER_ID
+			 , USER_NM
+			 , USER_PW
+			 , USER_TEL
+			 , USER_EMAIL
+			 , USER_NO
+			FROM TB_USER
+			WHERE USER_ID = #{userId}
+			  AND USER_PW = #{userPw}
+	]]>
+	</select>
+	
+	<insert id="joinAdr" parameterType="user">
+   <![CDATA[
+      INSERT INTO TB_USER_ADR
+      VALUES (
+         (
+            SELECT IFNULL(MAX(A.USER_NO), 0)
+               FROM TB_USER A
+         ),
+         (
+            SELECT IFNULL(MAX(B.ADR_NO),0) + 1
+            FROM TB_USER_ADR B
+         ),
+         #{userAdr},
+         'Y',
+         'Y'
+      )
+   ]]>
+   </insert>
+	
+	<select id="findId" parameterType="user" resultType="user">
+	<![CDATA[
+		SELECT USER_ID
+			 , USER_NM
+			 , USER_EMAIL
+			FROM TB_USER
+			WHERE USER_NM = #{userNm}
+			  AND USER_EMAIL = #{userEmail}
+	]]>
+	</select>
+	
+	<select id="findPw" parameterType="user" resultType="user">
+	<![CDATA[
+		SELECT USER_ID
+			 , USER_NM
+			 , USER_EMAIL
+			 , USER_PW
+			FROM TB_USER
+			WHERE USER_NM = #{userNm}
+			  AND USER_EMAIL = #{userEmail}
+			  AND USER_ID = #{userId}
+	]]>
+	</select>
+	
+	
+	<select id="manageUser" parameterType="map" resultType="user">
+	<![CDATA[
+		SELECT *
+			FROM TB_USER
+	]]>
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 'all'">
+				WHERE 1 = 0
+				   OR USER_NO LIKE CONCAT('%', #{searchKeyword}, '%')
+				   OR USER_Id LIKE CONCAT('%', #{searchKeyword}, '%')
+				</if>
+				<if test="searchCondition != 'all'">
+				WHERE 1 = 1
+					<if test="searchCondition == 'No'">
+						AND USER_NO LIKE CONCAT('%', #{searchKeyword}, '%')
+					</if>
+					<if test="searchCondition == 'name'">
+						AND USER_Id LIKE CONCAT('%', #{searchKeyword}, '%')
+					</if>
+				</if>
+			</if>
+	</select>
+	
+	<select id="getUser" parameterType="int" resultType="user">
+		SELECT * FROM TB_USER 
+		WHERE USER_NO =#{userNo}
+	</select>
+	<update id="updateUser" parameterType="map">
+		UPDATE TB_USER
+		SET 
+		USER_ID = #{userVO.userId},
+		USER_NM = #{userVO.userNm},
+		USER_EMAIL = #{userVO.userEmail},
+		USER_NICK = #{userVO.userNick},
+		USE_YN = #{userVO.useYn}
+		WHERE USER_NO = #{userNo}
+	</update>
+	<delete id="deleteUser" parameterType="int">
+		DELETE FROM TB_USER
+		WHERE USER_NO = #{no}
+	</delete>
+	
+	<update id="userUpdate" parameterType="user">
+	<![CDATA[
+		UPDATE TB_USER
+			SET
+				USER_PW = #{userPw},
+				USER_NM = #{userNm},
+				USER_EMAIL = #{userEmail},
+				USER_TEL = #{userTel}
+				WHERE USER_ID = #{userId}
+		
+	]]>
+	</update>
+	
+	
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.drg/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductDAO">
+	<!-- 쿼리 작성 영역 -->
+	<select id="prodNameCheck" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM TB_PROD WHERE PROD_NM = #{prodNm}
+	</select>
+	
+	<!-- 리스트 체크 -->
+	<select id="searchProduct" parameterType="map" resultType="prod">
+	<![CDATA[
+		SELECT *
+			FROM TB_PROD
+	]]>
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 'all'">
+				WHERE 1 = 0
+				   OR PROD_NO LIKE CONCAT('%', #{searchKeyword}, '%')
+				   OR PROD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+				   OR PROD_CG_CD LIKE CONCAT('%', #{searchKeyword}, '%')
+				</if>
+				<if test="searchCondition != 'all'">
+				WHERE 1 = 1
+					<if test="searchCondition == 'No'">
+						AND PROD_NO LIKE CONCAT('%', #{searchKeyword}, '%')
+					</if>
+					<if test="searchCondition == 'Name'">
+						AND PROD_NM LIKE CONCAT('%', #{searchKeyword}, '%')
+					</if>
+					<if test="searchCondition == 'Cate'">
+						AND PROD_CG_CD LIKE CONCAT('%', #{searchKeyword}, '%')
+					</if>
+				</if>
+			</if>
+	</select>
+	
+ 	<insert id="prodInsert" parameterType="map">
+ 	<selectKey resultType="int" keyProperty="prodNo" order="BEFORE">
+			SELECT IFNULL(MAX(A.PROD_NO), 0) + 1 FROM TB_PROD A
+		</selectKey>
+	INSERT INTO TB_PROD(
+		PROD_NO,
+		PROD_CG_CD,
+		PROD_NM,
+		PROD_PRICE,
+		PROD_QTY,
+		INPUT_DT,
+		PROD_UNIT,
+		PROD_VOL,
+		USE_YN,
+		SALE_Qty,
+		PROD_IMG_NM,
+		PROD_IMG_PATH
+	) VALUES(	
+		#{prodNo},
+		#{prodVO.prodCgcd},
+		#{prodVO.prodNm},
+		#{prodVO.prodPrice},
+		#{prodVO.prodQty},
+		NOW(),
+		#{prodVO.prodUnit},
+		#{prodVO.prodVol},
+		'Y',
+		0,
+		#{prodFile.prodFileNm},
+		#{prodFile.prodFilePath}
+	)
+	</insert> 
+	
+	<select id="prodDetail" resultType="prod" parameterType="int">
+	SELECT * FROM TB_PROD
+	WHERE PROD_NO = #{prodNo}
+	</select>
+	
+	<select id="prodInsert2" resultType="cate">
+	SELECT * FROM TB_CD
+	WHERE P_CD = "T01"
+	</select>
+	<delete id="prodDelete" parameterType="int">
+	DELETE FROM TB_PROD
+	WHERE PROD_NO = #{prodNo}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.drg/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CartDAO">
+	<!-- 쿼리 작성 영역 -->
+	<!-- 
+	<select id="getProdList" parameterType="String" resultType="prod">
+		SELECT * 
+		FROM TB_PROD
+		WHERE PROD_CG_CD LIKE CONCAT('%', #{cd})
+	</select>
+	
+	<select id="getProdCnt" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM TB_PROD
+		WHERE PROD_CG_CD LIKE CONCAT('%', #{cd})
+	</select>
+	
+	<select id="getCgNm" parameterType="String" resultType="String">
+		SELECT CD_NM
+		FROM TB_CD
+		WHERE CD = #{cd}
+		LIMIT 1
+	</select>
+	 -->
+	<select id="getProd" parameterType="int" resultType="prod">
+		SELECT * 
+		FROM TB_PROD
+		WHERE PROD_NO = #{prodNo}
+	</select>
+	
+	<select id="getCartList" parameterType="int" resultType="cart">
+		SELECT *
+		FROM TB_CART
+		WHERE USER_NO = #{userNo}
+	</select>
+	
+	<insert id="insertCart" parameterType="cart">
+		INSERT IGNORE INTO 
+		TB_CART (
+				CART_NO,
+				QTY,
+				PROD_NO,
+				USER_NO
+		) VALUES (
+				(SELECT IFNULL(MAX(A.CART_NO), 0) + 1 
+					FROM TB_CART A
+					WHERE A.USER_NO = #{userNo})
+				, #{qty}
+				, #{prodNo}
+				, #{userNo}
+		)
+	</insert>
+	
+	<delete id="deleteItem" parameterType="map">
+		DELETE FROM TB_CART
+		WHERE PROD_NO=#{prodNo} AND USER_NO=#{userNo}
+	</delete>
+	
+	<update id="updateItem" parameterType="map">
+		UPDATE TB_CART
+		SET QTY=#{prodQty}
+		WHERE USER_NO=#{userNo} AND PROD_NO=#{prodNo}
+	</update>
+	
+	<select id="getUserAddr" parameterType="int" resultType="string">
+		SELECT ADR
+		FROM TB_USER_ADR
+		WHERE USER_NO=#{userNo}
+	</select>
+<!-- ORDER_NO
+USER_NO
+ORDER_DT
+ADR_NO
+RECEIVER_NM
+RECEIVER_TEL
+PAY_WAY
+ORDER_STATUS
+TOTAL_PRICE
+
+
+private int orderNo;
+	private int userNo;
+	private Date orderDt;
+	private String adrNo;
+	private String receiverNm;
+	private String receiverTel;
+	private String payWay;
+	private String orderStatus;
+	private String totalPrice; -->
+	<insert id="setOrderInfo" parameterType="order">
+		INSERT INTO 
+		TB_ORDER VALUES
+			(
+				(SELECT IFNULL(MAX(A.ORDER_NO), 0) + 1 
+					FROM TB_ORDER A),
+				#{userNo},
+				now(),
+				#{adrNo},
+				#{receiverNm},
+				#{receiverTel},
+				#{payWay},
+				#{orderStatus},
+				#{totalPrice}
+			)
+		
+		
+	</insert>
+	
+	<select id="getOrderNo" parameterType="int" resultType="int">
+		SELECT ORDER_NO FROM TB_ORDER
+		WHERE USER_NO=#{userNo}
+	</select>
+
+<!-- ORDER_NO
+ORDER_D_NO
+PROD_NO
+PROD_QTY
+COUPON_NO
+TOTAL_PRICE -->
+
+	<insert id="setOrderDetail" parameterType="detail">
+		INSERT INTO TB_ORDER_DETAIL
+		VALUES (
+			#{orderNo},
+			(SELECT IFNULL(MAX(A.ORDER_D_NO), 0) + 1 
+					FROM TB_ORDER_DETAIL A
+					WHERE A.ORDER_NO = #{orderNo}),
+			#{prodNo},
+			#{prodQty},
+			1,
+			#{totalPrice}
+		)
+	</insert> 
+	
+</mapper>

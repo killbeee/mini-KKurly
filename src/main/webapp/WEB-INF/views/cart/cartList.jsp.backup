@@ -1,0 +1,279 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>껄리</title>
+<style>
+
+	.container {
+		width: 1000px;
+		margin: 0 auto;
+		text-align: center;
+	}
+	.container h2 {
+		font-size: 1.7em;
+		margin-top: 50px; margin-bottom: 75px;
+	}
+	.select-container1, .select-container2 {
+		width: 800px;
+		float: left;
+	}
+	.op-select1, .op-select2 {
+		margin: 0 auto;
+		display: block;
+		text-align: center;
+		list-style: none;
+	}
+	.op-select1 li, .op-select2 li{
+		margin: 0 auto;
+		position: relative;
+		width: 100px;
+		height: 40px;
+		left: -40px;
+		
+	}
+	.op-select2 img {
+		width: 40px;
+	}
+	.op-select1 a, .op-select2 a {
+		color: black;
+		text-decoration: none;
+	}
+	.click-img {
+		float: left;
+	}
+	.click-img img {
+		margin-right: 10px;
+	}
+	.selectAll1, .selectAll2 {
+		float: left;
+		align-items: center;
+	}
+	.horiLine {
+		float:left;
+	}
+
+
+	#v-line {
+		bottom: 20px;
+		margin-left: 20px; margin-right: 20px;
+		/* float: left; */
+		/* border-left: thin solid lightgray; */
+		color: lightgray;
+		height: 16px;
+	}
+	
+	.deleteSelection {
+		margin: 0;
+		float: left;
+	}
+	.selectAll1, .selectAll2, .horiLine, .deleteSelection {
+		line-height: 33px;
+	}
+	.sub-container {
+		position: relative;
+		left: -20px;
+	}
+	
+	.cart-container {
+		width: 800px;
+		height: 300px;
+	}
+	
+	.cold-ul, .frozen-ul, .normal-ul {
+		margin: 0 auto;
+		text-align: center;
+		list-style: none;
+	}
+	
+	.cold-ul li, .frozen-ul li, .normal-ul li {
+		margin: 0;
+		position: relative;
+		height: 48px;
+		left: -40px;
+	}
+	
+	.txt-btn-selectAll, .txt-btn-delete {
+		border: none;
+		background: none;
+		font-size: 16px;
+		width: 70px;
+		height: 30px;
+		cursor: pointer;
+	}
+	 
+	.img-btn-fold {
+		background: url("${pageContext.request.contextPath }/images/unfold.png") no-repeat;
+		border: none;
+		width: 30px;
+		height: 30px;
+		cursor: pointer;
+	}
+	
+/* 	.img-btn-selectAll { */
+
+	input[type="checkbox"] {
+		display: none;
+	}
+	
+	input[id=img-btn-selectAll2] {
+		appearance: none;
+		background-image: url("${pageContext.request.contextPath }/images/click-off.png");
+		display: flex;
+		margin-right: 4px;
+		border: none;
+/* 		width: 1.5em;
+		height: 1.5em; */
+/* 		border-radius: 50%; */
+		width:  30px;
+		height: 30px; 
+		cursor: pointer;
+	}
+	input[id=img-btn-selectAll2]:checked {
+	/* .img-btn-selectAll:checked { */
+		background-image: url("${pageContext.request.contextPath }/images/click-on.png") no-repeat;
+	}
+	
+	
+	.icon-status {
+		float: left;
+	}
+	.icon-status img {
+		margin-left: 2px;
+		margin-right: 10px;
+	}
+	.text-status {
+		float: left;
+		align-items: center;
+		font-size: 19px;
+		line-height: 34px;
+	}
+	.prods-status {
+		float: right;
+	}
+	.selectAll input {
+		margin: 0 0 0 0;
+	}
+	
+	footer {
+		clear: both;
+	}	
+</style>
+<script>
+	$(function() {
+		
+	});
+</script>
+</head>
+<body>
+<header>
+	<jsp:include page="${pageContext.request.contextPath }/mainHeader.jsp"></jsp:include>
+</header>
+<div style="height:150px"></div>
+<section>
+	<div class="container">
+		<h2>장바구니</h2>
+		
+		<div class="select-container1 sub-container">	
+			<ul class="op-select1">
+				<!-- <li class="click-img">
+					<span><input type="checkbox" id="img-btn-selectAll1" value="all"></span>
+				</li> -->
+				<li class="selectAll1">
+					<!-- <span><input type="button" class="txt-btn-selectAll" value="전체선택"></span> -->
+					<span><input type="checkbox" /><label>전체선택</label></span>
+				</li>
+				<li class="horiLine">
+					<span id="v-line" class="v-line">|</span>
+				</li>
+				<li class="deleteSelection">
+					<span><input type="button" class="txt-btn-delete" value="선택삭제"></span>
+				</li>
+			</ul>	
+			<hr style="clear: both; margin-bottom: 15px;">
+		</div>
+		
+		<div class="cart-container sub-container">
+			<!-- <p>장바구니에 담긴 상품이 없습니다</p> -->
+			
+			<div class="cold-container">
+				<ul class="cold-ul">
+					<li class="icon-status">
+						<span><img src="${pageContext.request.contextPath }/images/cold.png"></span>
+					</li>
+					<li class="text-status">
+						<span>냉장 상품</span>
+					</li>
+					<li class="prods-status">
+						<span><input type="button" class="img-btn-fold"></span>
+					</li>
+				</ul>
+			</div>
+			
+			<hr style="clear: both; margin-bottom: 15px;">
+			<div class="frozen-container">
+				<ul class="frozen-ul">
+					<li class="icon-status">
+						<span><img src="${pageContext.request.contextPath }/images/frozen.png"></span>
+					</li>
+					<li class="text-status">
+						<span>냉동 상품</span>
+					</li>
+					<li class="prods-status">
+						<span><input type="button" class="img-btn-fold"></span>
+					</li>
+				</ul>
+			</div>
+			
+			<hr style="clear: both; margin-bottom: 15px;">
+			<div class="normal-container">
+				<ul class="normal-ul">
+					<li class="icon-status">
+						<span><img src="${pageContext.request.contextPath }/images/normal.png"></span>
+					</li>
+					<li class="text-status">
+						<span>상온 상품</span>
+					</li>
+					<li class="prods-status">
+						<span><input type="button" class="img-btn-fold"></span>
+					</li>
+				</ul>
+			</div>
+			
+			
+		</div>
+		
+		<div class="select-container2 sub-container">		
+			<hr style="clear: both; color: lightgray;">
+			<ul class="op-select2">
+ 				<li class="click-img">
+ 					<input type="checkbox">
+					<span><input type="checkbox" id="img-btn-selectAll2"/></span>
+				</li>
+				<li class="selectAll2">
+					<!-- <span><input type="button" class="txt-btn-selectAll" value="전체선택"></span> -->
+					<span><input type="checkbox" name="all" id="img-btn-selectAll3" value="전체선택" /><label for="all">전체선택</label></span>
+				</li>
+				<li class="horiLine">
+					<span id="v-line" class="v-line">|</span>
+				</li>
+				<li class="deleteSelection">
+					<span><input type="button" class="txt-btn-delete" value="선택삭제"></span>
+				</li>
+			</ul>	
+			
+		</div>
+		
+	</div>
+</section>
+	
+<footer>
+	<jsp:include page="${pageContext.request.contextPath }/footer.jsp"></jsp:include>
+</footer>	
+	
+	
+	
+</body>
+</html>
